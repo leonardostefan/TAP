@@ -39,6 +39,9 @@ class Album //Composite Composite
 
 class Musica
 {
+	int duracao ;//segundos 
+	char nome[STRING_MAX];
+	char estilo[STRING_MAX];
+	Album* albumPai;
+};
 
-
-}
