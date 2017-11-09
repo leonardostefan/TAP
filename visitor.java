@@ -1,70 +1,108 @@
+import java.util.ArrayList;
 
-interface Visitor
+class Streaming
 {
- 
-  public void visitar(Diretorio diretorio);  
+    private Streaming();
+    private static Streaming instance=NULL;
+    
+    public Streaming instanciaStreaming(string, string); //instancia uma
+    public String senha; 	
+    public String login;	 
+    public int tipoUsuario; 		//Plano
+    public Diretorio diretorio; //Diretorio de musicas
+
 }
 
-
-
-class Todos implements Visitor
+class Elemento
 {
-   void visitar(Diretorio diretorio) override{
-      for (int i=0; diretorio.playlistssize(); i++){
-         System.out.printf ("P: %s\n", diretorio.playlists[i].nome);
-         for (int j=0; diretorio.playlists[i].albuns[j].size(); j++){
-            System.out.printf("A: %s\n", diretorio.playlists[i].albuns[j].nome);
-            for (int k=0; k < 5; k++){
-               System.out.printf ("M: %s\n", diretorio.playlists[i].albuns[j].musicas[k].nome); 
-            }
-         }
-      }
+
+}
+
+class Diretorio extends Elemento
+{
+    ArrayList<Playlist> playlists;
+
+    public void addPlaylist (Playlist lista)
+    {
+	this.playlists.add(lista);
+    }
+
+}
+
+class Playlist extends Diretorio
+{
+    ArrayList<Album> albuns;
+    String nome, estilo, estiloSec;
+
+    public void criaPlaylsit (String name, String style, String style2)
+    {
+	this.nome = nome;
+	this.estilo = style;
+	this.estiloSec = style2;
+    }
+
+    public void addAlbum (Album musicAlbum)
+    {
+	this.albuns.add(musicAlbum);
     }
 }
 
-class Estilos implements Visitor
+class Album extends Elemento
 {
-    void visitar(Diretorio diretorio){
-      for (int i=0; diretorio.playlists.size(); i++){
-         for (int j=0; diretorio.playlists[i].albuns[j].size();j++){
-            for (int k=0; k < 5; k++){
-               if (diretorio.playlists[i].albuns[j].musicas[k].nome.equals(diretorio.estiloPesquisa)){
-                  System.out.printf("%s\n", diretorio.playlists[i].albuns[j].musicas[k].nome);
-               }
-            }  
-         }
-      }
-   }  
+    ArrayList<Musica> musicas;
+    String nome, banda, estilo;
+
+    public void criaAlbum (String name, String band, String style)
+    {
+	this.nome = name;
+	this.banda = band;
+	this.estilo = style;
+    }
+
+    public void addMusica (Musica music)
+    {
+	this.musicas.dd(music);
+    }
 }
 
-class Tempo implements Visitor
+class Musica extends Elemento
 {
-   void visitar(Diretorio diretorio){
-      for (int i=0; diretorio.playlists[i].size(); i++){
-         if (diretorio.playlists[i].estilo.equals(diretorio.estiloPesquisa)){
-            System.out.printf("Playlist %s com o estilo %s\n", diretorio.playlists[i].nome, diretorio.playlists[i].estilo);
-            for (int j=0; diretorio.playlists[i].albuns[j].size();j++){
-               if (diretorio.playlists[i].albuns[j].estilo.equals(diretorio.estiloPesquisa)){
-                  for (int k=0; diretorio.playlists[i].albuns[j].musicas[k].size();k++){
-                     if (diretorio.playlists[i].albuns[j].musicas[k].duracao > 180){
-                        System.out.printf("Musica %s com o estilo %s", diretorio.playlists[i].albuns[j].musicas[k].nome, diretorio.playlists[i].albuns[j].musicas[k].estilo)
-                     }
-                  }
-               }
-            }
-         }
-         else if (diretorio.playlists[i].estiloSec.equals(diretorio.estiloPesquisa)){
-            System.out.printf ("Playlist %s com o estilo secundário %s\n", diretorio.playlists[i].nome, diretorio.playlists[i].estiloSec);
-            for (int j=0; diretorio.playlists[i].albuns[j].size();j++){
-               if (diretorio.playlists[i].albuns[j].estilo.equals(diretorio.estiloPesquisa)){
-                  for (int k=0; diretorio.playlists[i].albuns[j].musicas[k].size();k++){
-                     if (diretorio.playlists[i].albuns[j].musicas[k].duracao > 180){
-                        System.out.printf("Musica %s com o estilo %s", diretorio.playlists[i].albuns[j].musicas[k].nome, diretorio.playlists[i].albuns[j].musicas[k].estilo)
-                     }
-                  }
-               }
-            }
-         }
-      }
-   }
+    int duracao; // em segundos
+    String nome, estilo;
+
+    public void criaMusica (int dur, String name, String style)
+    {
+	this.duracao = dur;
+	this.nome = name;
+	this.estilo = style;
+    }
+
+}
+
+
+interface Visitor
+{
+    void visitaTodos(Elemento elemento);
+    void visitaEstilo(Elemento elemento, String estilo);
+    void visitaTempo (Elemento elemento, String estilo, int tempo);
+}
+
+class Visitante implements Visitor
+{
+    public void visitaTodos(Elemento elemento)
+    {
+	System.out.println("Nome: ", +elemento.nome, " & Estilo: ", +elemento.estilo);			   
+    }
+
+    public void visitaEstilo (Elemento elemento, String estilo)
+    {
+	System.out.println("Nome: ", +elemento.nome, " & Estilo: ", +elemento.estilo);
+	    
+    }
+    
+    public void visitaTempo (Elemento elemento, String estilo, int tempo)
+    {
+       System.out.println("Nome: ", +elemento.nome, " & Estilo: ", +elemento.estilo);
+    }
+    
 }
