@@ -22,6 +22,8 @@ class Diretorio
     {
 	this.playlists.add(lista);
     }
+
+    public void accept
 }
 
 class Playlist extends Diretorio
@@ -71,5 +73,12 @@ class Musica
 	this.nome = name;
 	this.estilo = style;
     }
+
+}
+
+
+interface Visitor
+{
+    void visitaTodos(
 
 }
