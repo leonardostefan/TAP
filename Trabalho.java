@@ -20,14 +20,17 @@ class Streaming
 	this.login = login;
 	this.senha = senha;
 	this.tipoUsuario = tipoUsuario;
+	this.diretorio = new Diretorio();
     }
     public void addPlaylist (Playlist lista)
     {
+	if (this.diretorio.playlists == null)
+	    this.diretorio.playlists = new ArrayList<Playlist>();
 	this.diretorio.playlists.add(lista);
     }
 
     public void accept (Visitor visita){
-	for (int i=1; i<=5; i++)
+	for (int i=0; i<5; i++)
 	    this.diretorio.playlists.get(i).accept1(visita);
     }
 }
@@ -42,29 +45,34 @@ class Diretorio
 class Playlist extends Diretorio
 {
     ArrayList<Album> albuns;
+    ArrayList<Playlist> lista;
     String nome, estilo, estiloSec;
 
     public void criaPlaylist (String name, String style, String style2)
     {
-	this.nome = nome;
+	this.nome = name;
 	this.estilo = style;
 	this.estiloSec = style2;
     }
 
     public void addAlbum (Album musicAlbum)
     {
+	if (albuns == null)
+	    albuns = new ArrayList<Album>();
 	this.albuns.add(musicAlbum);
     }
     
     public void addLista (Playlist lista)
     {
-	this.playlists.add(lista);
+	if (this.lista == null)
+	    this.lista = new ArrayList<Playlist>();
+	this.lista.add(lista);
     }
 
     public void accept1 (Visitor visita)
     {
 	visita.visitaLista(this);
-	for (int i=1; i<=4; i++)
+	for (int i=0; i<4; i++)
 	    this.albuns.get(i).accept2(visita);
     }
 }
@@ -83,13 +91,15 @@ class Album extends Diretorio
 
     public void addMusica (Musica music)
     {
+	if (musicas == null)
+	    musicas = new ArrayList<Musica>();
 	this.musicas.add(music);
     }
 
     public void accept2 (Visitor visita)
     {
 	visita.visitaAlbum(this);
-	for(int i=1; i<=5; i++)
+	for(int i=0; i<5; i++)
 	    this.musicas.get(i).accept3(visita);
     }
 }
@@ -196,13 +206,13 @@ public class Trabalho{
 	servico.infoUsuario("dummy","password","free");
        
         // Instancia os diversos componentes do serviço de string
-        for(int i = 1; i <= 5; i++){
+        for(int i = 0; i < 5; i++){
             Playlist p = new Playlist();
 	    p.criaPlaylist("Playlist"+i, "Estilo"+i, "EstiloSecundario"+i);
-            for(int j = 1; j <= 4; j++){
+            for(int j = 0; j < 4; j++){
                 Album a = new Album();
 		a.criaAlbum("Album"+(i*4+j), "Estilo"+i, "NomeBanda"+j);
-                for(int k = 1; k <= 5; k++){
+                for(int k = 0; k < 5; k++){
                     Musica m = new Musica();
 		    m.criaMusica("Musica"+(i*4+j)+"-"+k, "Estilo"+i, 120+(k*j*i));
                     a.addMusica(m);
