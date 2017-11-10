@@ -176,10 +176,10 @@ public class Trabalho{
 	    p.criaPlaylist("Playlist"+i, "Estilo"+i, "EstiloSecundario"+i);
             for(int j = 1; j <= 4; j++){
                 Album a = new Album();
-		a.criaAlbum("Album"+(i*4+j), "Estilo"+i), "NomeBanda"+j);
+		a.criaAlbum("Album"+(i*4+j), "Estilo"+i, "NomeBanda"+j);
                 for(int k = 1; k <= 5; k++){
                     Musica m = new Musica();
-		    m.criaMusica("Musica"+(i*4+j)+"-"+k, "Estilo"+i, 120+*k*j*i);
+		    m.criaMusica("Musica"+(i*4+j)+"-"+k, "Estilo"+i, 120+(k*j*i));
                     a.addMusica(m);
                 }
                 p.addAlbum(a);
@@ -195,11 +195,9 @@ public class Trabalho{
         //Chamando os visitantes para realizar as impressões
         System.out.println("Imprimindo todos os elementos:");
         servico.accept(new VisitanteTodos());
-        int rand = (aleatorio.nextInt(10)+1);
-        System.out.println("Imprimindo as musicas do estilo 'Estilo"+rand+"'");
-        servico.accept(new VisitanteEstilo("Estilo"+rand));
-        rand = (aleatorio.nextInt(10)+1);
-        System.out.println("Imprimindo as musicas do estilo 'Estilo"+rand+"' e duração maior que 3 minutos");
-        servico.accept(new VisitanteTempo("Estilo"+rand));
+        System.out.println("Imprimindo as musicas do estilo 'Estilo"+1+"'");
+        servico.accept(new VisitanteEstilo("Estilo"+1));
+        System.out.println("Imprimindo as musicas do estilo 'Estilo"+2+"' e duração maior que 3 minutos");
+        servico.accept(new VisitanteTempo("Estilo"+2));
     }
 }
