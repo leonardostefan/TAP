@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.*;
 
 class Streaming
 {
@@ -28,7 +28,7 @@ class Streaming
 
     public void accept (Visitor visita){
 	for (int i=1; i<=5; i++)
-	    this.diretorio.get(i).accept1(visita);
+	    this.diretorio.playlists.get(i).accept1(visita);
     }
 }
 
@@ -63,7 +63,7 @@ class Playlist extends Diretorio
 
     public void accept1 (Visitor visita)
     {
-	visita.visita(this);
+	visita.visitaLista(this);
 	for (int i=1; i<=4; i++)
 	    this.albuns.get(i).accept2(visita);
     }
@@ -88,7 +88,7 @@ class Album extends Diretorio
 
     public void accept2 (Visitor visita)
     {
-	visita.visita(this);
+	visita.visitaAlbum(this);
 	for(int i=1; i<=5; i++)
 	    this.musicas.get(i).accept3(visita);
     }
@@ -115,62 +115,87 @@ class Musica
 
 interface Visitor
 {
-    abstract void visita(Diretorio elemento);
+    abstract void visitaLista(Playlist elemento);
+    abstract void visitaAlbum(Album elemento);
     abstract void visitaMusica(Musica musica);
-    abstract void visita(Diretorio elemento, String estilo);
+    abstract void visitaLista(Playlist elemento, String estilo);
+    abstract void visitaAlbum(Album elemento, String estilo);
     abstract void visitaMusica(Musica musica, String estilo);
 }
 
 class VisitanteTodos implements Visitor
 {
-    public void visita (Diretorio elemento){
-	if (elemento.getClass() == Playlist.class || elemento.getClass() == Album.class)
-	    System.out.println("Nome: ", +elemento.nome, " & Estilo: ", +elemento.estilo);
+    public void visitaLista (Playlist elemento){
+	System.out.println("Nome: "+elemento.nome+" & Estilo: "+elemento.estilo);
+    }
+
+    public void visitaAlbum (Album elemento){
+	System.out.println("Nome: "+elemento.nome+" & Estilo: "+elemento.estilo);
     }
     
     public void visitaMusica (Musica musica){
-	System.out.println("Nome: ", +musica.nome, " & Estilo: ", musica.estilo);
+	System.out.println("Nome: "+musica.nome+" & Estilo: "+musica.estilo);
     }
+
+    public void visitaLista (Playlist elemento, String estilo){}
+    public void visitaAlbum (Album elemento, String estilo){}
+    public void visitaMusica (Musica musica, String estilo){}
+
 }
 
 class VisitanteEstilo implements Visitor
 {
-    public void visita (Diretorio elemento, String estilo){}
+    String estilo;
+    
+    VisitanteEstilo (String n){
+	this.estilo = n;
+    }
+    public void visitaLista (Playlist elemento){}
+    public void visitaAlbum (Album elemento){}
+    public void visitaMusica (Musica elemento){}
 
+    public void visitaLista (Playlist elemento, String estilo){}
+    public void visitaAlbum (Album elemento, String estilo){}
     public void visitaMusica (Musica musica, String estilo){
-	if (musica.estilo == estilo)
-	    System.out.println("Nome: ", +musica.nome, " & Estilo: ", musica.estilo);
+	if (musica.estilo.equals(this.estilo))
+	    System.out.println("Nome: "+musica.nome+" & Estilo: "+musica.estilo);
     }
 }   
  
 class VisitanteTempo implements Visitor
 {
-   public void visita (Diretorio elemento, int String){
-	if (elemento.getClass() == Playlist.class){
-	    if (elemento.estilo == estilo)
-		System.out.println("Nome: ", +estilo.nome, " & Estilo: ", estilo.estilo);
-	    else if (elemento.estiloSec == estilo)
-		System.out.println("Nome: ", +estilo.nome, " & Estilo: ", estilo.estiloSec);
-	}
-	else
-	    if (elemento.estilo == estilo)
-		System.out.println("Nome: ", +estilo.nome, " & Estilo: ", estilo.estilo);
+    String estilo;
+    
+    VisitanteTempo (String n){
+	this.estilo = n;
     }
 
-    public void visitaMusica (Musica musica, int String){
-	 if (musica.estilo == estilo && musica.duracao > 180)
-		System.out.println("Nome: ", +musica.nome, " & Estilo: ", musica.estilo);
+    public void visitaLista (Playlist elemento){}
+    public void visitaAlbum (Album elemento){}
+    public void visitaMusica (Musica musica){}
+   
+    public void visitaLista (Playlist elemento, String estilo){
+	    if (elemento.estilo.equals(this.estilo))
+		System.out.println("Nome: "+elemento.nome+" & Estilo: "+elemento.estilo);
+	    else if (elemento.estiloSec.equals(this.estilo))
+		System.out.println("Nome: "+elemento.nome+" & Estilo: "+elemento.estiloSec);
+	}
+    public void visitaAlbum (Album elemento, String estilo){}
+
+    public void visitaMusica (Musica musica, String estilo){
+	if (musica.estilo.equals(this.estilo) && musica.duracao > 180)
+		System.out.println("Nome: "+musica.nome+" & Estilo: "+musica.estilo);
     }
 }
 
 public class Trabalho{
     public static void main(String[] args){
-        //Instanciação e definição de parametros de um serviço de streaming
         
+	// Cria o serviço de streaming e coloca seus atributos básicos
 	Streaming servico = Streaming.getInstance();
 	servico.infoUsuario("dummy","password","free");
        
-        //Instanciando playlists, albuns e musicas
+        // Instancia os diversos componentes do serviço de string
         for(int i = 1; i <= 5; i++){
             Playlist p = new Playlist();
 	    p.criaPlaylist("Playlist"+i, "Estilo"+i, "EstiloSecundario"+i);
@@ -187,17 +212,18 @@ public class Trabalho{
             servico.addPlaylist(p);
         }
 
-        //P1 recebe P3
-        servico.diretorio.get(0).addLista(servico.diretorio.get(2));
-        //P2 recebe P5
-        servico.diretorio.get(1).addLista(servico.diretorio.get(4));
+        //Playlist 1 recebe Playlist 3
+        servico.diretorio.playlists.get(0).addLista(servico.diretorio.playlists.get(2));
+        //Playlist 1 recebe Playlist 5
+        servico.diretorio.playlists.get(1).addLista(servico.diretorio.playlists.get(4));
 
-        //Chamando os visitantes para realizar as impressões
-        System.out.println("Imprimindo todos os elementos:");
+        //Realiza as diversas impressões
+
+        System.out.println("Usuário deseja saber todos os seus elementos:");
         servico.accept(new VisitanteTodos());
-        System.out.println("Imprimindo as musicas do estilo 'Estilo"+1+"'");
+        System.out.println("Usuário deseja saber as musicas do estilo 'Estilo"+1+"'");
         servico.accept(new VisitanteEstilo("Estilo"+1));
-        System.out.println("Imprimindo as musicas do estilo 'Estilo"+2+"' e duração maior que 3 minutos");
+        System.out.println("Usuário deseja saber as musicas do estilo 'Estilo"+2+"' com duração maior que 3 minutos");
         servico.accept(new VisitanteTempo("Estilo"+2));
     }
 }
